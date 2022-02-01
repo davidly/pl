@@ -40,7 +40,7 @@ Sample results:
       21080        130,785,280       41      981         82,544       11,703  Adobe Desktop Service
       20836        330,067,968       36      740         83,368       14,187  Adobe CEF Helper
     
-      7        549,089,280      181    3,627        303,308       33,372  (TOTAL)
+          7        549,089,280      181    3,627        303,308       33,372  (TOTAL)
 
     C:\>pl -f "adobe installer"
     
