@@ -149,7 +149,7 @@ class ProcessList
                 sbOut.AppendLine( "        Executable: " + pm.FileName );
 
                 if ( g_CommandLineInfo )
-                    sbOut.AppendLine( "        Command:    " + GetCommandLine( proc ) );
+                    sbOut.AppendLine( "           Command: " + GetCommandLine( proc ) );
 
                 if ( g_ModuleInfo )
                 {
