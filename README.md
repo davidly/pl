@@ -60,5 +60,6 @@ Sample results:
                      31 kernel cpu time (ms)
                      31 user cpu time (ms)
                      62 total cpu time (ms)
+     0001:05:52:37:0876 runtime in dddd:hh:mm:ss:mmmm
             Executable: C:\Program Files (x86)\Common Files\Adobe\Adobe Desktop Common\ElevationManager\Adobe Installer.exe
-            Command:    "C:\Program Files (x86)\Common Files\Adobe\Adobe Desktop Common\ElevationManager\Adobe Installer.exe" --pipename={871D3EC1-DED0-4797-9433-7CE476AE62B2}
+               Command: "C:\Program Files (x86)\Common Files\Adobe\Adobe Desktop Common\ElevationManager\Adobe Installer.exe" --pipename={871D3EC1-DED0-4797-9433-7CE476AE62B2}
