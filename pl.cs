@@ -19,7 +19,7 @@ class ProcessList
         sbOut.AppendLine( "             -k             Kills the process(es) (only when not all processes)" );
         sbOut.AppendLine( "             -m             Used with -f, shows modules loaded in the process" );
         sbOut.AppendLine( "             -p             Match [APPNAME] with the path of processes in addition to name" );
-        sbOut.AppendLine( "             -s:[C|N|P|W]   Sort by CPU Time, Name, PID, or Working Set (default)" );
+        sbOut.AppendLine( "             -s:[C|N|P|S|W] Sort by CPU Time, Name, PID, Start Time, or Working Set (default)" );
         sbOut.AppendLine( "  examples: pl              list all processes" );
         sbOut.AppendLine( "            pl 1542         list process with this PID" );
         sbOut.AppendLine( "            pl -s:w msedge  list processes with this name sorted by working set" );
@@ -117,6 +117,34 @@ class ProcessList
         return 0;
     } //GetUserMilliseconds
 
+    static string GetWindowTitle( Process proc )
+    {
+        try
+        {
+            return proc.MainWindowTitle;
+        }
+        catch ( Exception e )
+        {
+            // probably access-denied
+        }
+
+        return null;
+    } //GetWindowTitle
+
+    static DateTime GetStartTime( Process proc )
+    {
+        try
+        {
+            return proc.StartTime;
+        }
+        catch ( Exception e )
+        {
+            // probably access-denied
+        }
+
+        return new DateTime( 0 );
+    } //GetStartTime
+
     static void PrintProcessInfo( Process proc )
     {
         if ( g_FullInfo )
@@ -139,17 +167,25 @@ class ProcessList
             sbOut.AppendFormat( "{0,19:N0} user cpu time (ms)\n", GetUserMilliseconds( proc ) );
             sbOut.AppendFormat( "{0,19:N0} total cpu time (ms)\n", GetTotalMilliseconds( proc ) );
 
-            TimeSpan runtime = DateTime.Now - proc.StartTime;
+            DateTime startTime = GetStartTime( proc );
+
+            TimeSpan runtime = DateTime.Now - startTime;
             sbOut.AppendFormat( " {0,4:D4}:{1,2:D2}:{2,2:D2}:{3,2:D2}:{4,4:D4} runtime in dddd:hh:mm:ss:mmmm\n",
                                 runtime.Days, runtime.Hours, runtime.Minutes, runtime.Seconds, runtime.Milliseconds );
+
+            sbOut.AppendFormat( "        start time: {0}\n", startTime );
+
+            string title = GetWindowTitle( proc );
+            if ( null != title && title.Length > 0 )
+                sbOut.AppendFormat( "      window title: {0}\n", title );
 
             try
             {
                 ProcessModule pm = proc.MainModule;
-                sbOut.AppendLine( "        Executable: " + pm.FileName );
+                sbOut.AppendLine( "        executable: " + pm.FileName );
 
                 if ( g_CommandLineInfo )
-                    sbOut.AppendLine( "           Command: " + GetCommandLine( proc ) );
+                    sbOut.AppendLine( "           command: " + GetCommandLine( proc ) );
 
                 if ( g_ModuleInfo )
                 {
@@ -230,6 +266,16 @@ class ProcessList
             return String.Compare( ( (Process) x ).ProcessName, ( (Process) y ).ProcessName );
         }
     } //ProcComparerName
+
+    public class ProcComparerStartTime : IComparer
+    {
+        public int Compare( Object x, Object y )
+        {
+            DateTime startX = GetStartTime( (Process) x );
+            DateTime startY = GetStartTime( (Process) y );
+            return DateTime.Compare( startX, startY );
+        }
+    } //ProcComparerStartTime
 
     static public Regex WildcardsToRegex( string pattern )
     {
@@ -330,6 +376,8 @@ class ProcessList
 
                     if ( 'W' == s )
                         comp = new ProcComparerWorkingSet();
+                    else if ( 'S' == s )
+                        comp = new ProcComparerStartTime();
                     else if ( 'P' == s )
                         comp = new ProcComparerPID();
                     else if ( 'N' == s )
