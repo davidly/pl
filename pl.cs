@@ -5,10 +5,30 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Management;
+using System.Runtime.InteropServices;
 
 class ProcessList
 {
+    [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
+    static extern bool IsWow64Process2( IntPtr hProcess, out ushort pProcessMachine, out ushort pNativeMachine );
+
+    [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
+    static extern bool GetProcessInformation( IntPtr hProcess, int pProcessInfo, out ulong pprocessInformation, uint size );
+
     static StringBuilder sbOut = new StringBuilder();
+
+    static string MachineType( ushort m )
+    {
+        if ( 0x014c == m )
+            return "Intel 386";
+        if ( 0x8664 == m )
+            return "AMD 64";
+        if ( 0xAA64 == m )
+            return "Arm 64";
+        if ( 0 == m )
+            return "native";
+        return "(not recognized)";
+    } //MachineType
 
     static void Usage()
     {
@@ -52,6 +72,39 @@ class ProcessList
     static long g_HandlesTotal = 0;
     static long g_NonPagedPoolTotal = 0;
     static long g_CPUTimeTotal = 0;
+
+    static void ShowWow64Info( IntPtr hProcess )
+    {
+        try
+        {
+            ulong info = 0;
+            // 9 == ProcessMachineTypeInfo
+            bool ok = GetProcessInformation( hProcess, 9, out info, sizeof( ulong ) );
+            if ( ok )
+            {
+                ushort pmProc = (ushort) ( info & 0xffff );
+                ushort processMachine = 0, nativeMachine = 0;
+                ok = IsWow64Process2( hProcess, out processMachine, out nativeMachine );
+                if ( ok )
+                {
+                    // IsWow64Process2's processMachine lies for amd64 processes running on arm64,
+                    // so use GetProcessInformation for that value
+    
+                    sbOut.AppendFormat( "  process, machine: 0x{0:x} == {1}, 0x{2:x} == {3}\n",
+                                        pmProc, MachineType( pmProc ),
+                                        nativeMachine, MachineType( nativeMachine ) );
+                }
+            }
+        }
+        catch ( EntryPointNotFoundException e )
+        {
+            // this will happen on older versions of Windows since the APIs may not exist. ignore it.
+        }
+        catch ( Exception e )
+        {
+            Console.WriteLine( "unable to get process and wow info for a process: {0}", e.ToString() );
+        }
+    } //ShowWow64Info
 
     static string GetCommandLine( Process process )
     {
@@ -178,6 +231,8 @@ class ProcessList
             string title = GetWindowTitle( proc );
             if ( null != title && title.Length > 0 )
                 sbOut.AppendFormat( "      window title: {0}\n", title );
+
+            ShowWow64Info( proc.Handle );
 
             try
             {
