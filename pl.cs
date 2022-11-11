@@ -15,6 +15,16 @@ class ProcessList
     [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
     static extern bool GetProcessInformation( IntPtr hProcess, int pProcessInfo, out ulong pprocessInformation, uint size );
 
+    public struct PROCESS_POWER_THROTTLING_STATE
+    {
+        public uint Version;
+        public uint ControlMask;
+        public uint StateMask;
+    }
+
+    [DllImport("kernel32.dll", EntryPoint="GetProcessInformation", SetLastError=true, CharSet=CharSet.Auto)]
+    static extern bool GetProcessInformation4( IntPtr hProcess, int pProcessInfo, out PROCESS_POWER_THROTTLING_STATE pprocessInformation, uint size );
+
     static StringBuilder sbOut = new StringBuilder();
 
     static string MachineType( ushort m )
@@ -95,6 +105,20 @@ class ProcessList
                                         nativeMachine, MachineType( nativeMachine ) );
                 }
             }
+
+            PROCESS_POWER_THROTTLING_STATE ppts = new PROCESS_POWER_THROTTLING_STATE();
+            uint structSize = (uint) System.Runtime.InteropServices.Marshal.SizeOf( ppts );
+            ok = GetProcessInformation4( hProcess, 4, out ppts, structSize );
+            if ( ok )
+            {
+                //Console.WriteLine( "ppts.Version: 0x{0:x}, control mask 0x{1:x}, statemask 0x{2:x}", ppts.Version, ppts.ControlMask, ppts.StateMask );
+            }
+            else
+            {
+                // this currently fails with error 87 invalid parameter. My guess is 4 isn't implemented yet
+                // Console.WriteLine( "gpi4 failed, error {0}", Marshal.GetLastWin32Error() );
+            }
+
         }
         catch ( EntryPointNotFoundException e )
         {
@@ -223,7 +247,7 @@ class ProcessList
             DateTime startTime = GetStartTime( proc );
 
             TimeSpan runtime = DateTime.Now - startTime;
-            sbOut.AppendFormat( " {0,4:D4}:{1,2:D2}:{2,2:D2}:{3,2:D2}:{4,4:D4} runtime in dddd:hh:mm:ss:mmmm\n",
+            sbOut.AppendFormat( "  {0,4:D4}:{1,2:D2}:{2,2:D2}:{3,2:D2}:{4,3:D3} runtime in dddd:hh:mm:ss:mmm\n",
                                 runtime.Days, runtime.Hours, runtime.Minutes, runtime.Seconds, runtime.Milliseconds );
 
             sbOut.AppendFormat( "        start time: {0}\n", startTime );
