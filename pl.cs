@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 
 class ProcessList
 {
+    [DllImport("User32")]
+    extern public static int GetGuiResources( IntPtr hProcess, int uiFlags );
+
     [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
     static extern bool IsWow64Process2( IntPtr hProcess, out ushort pProcessMachine, out ushort pNativeMachine );
 
@@ -82,6 +85,23 @@ class ProcessList
     static long g_HandlesTotal = 0;
     static long g_NonPagedPoolTotal = 0;
     static long g_CPUTimeTotal = 0;
+
+    static void ShowGuiResources( IntPtr hProcess )
+    {
+        try
+        {
+            int countGDI = GetGuiResources( hProcess, 0 );
+            int countUser = GetGuiResources( hProcess, 1 );
+            if ( 0 != countGDI || 0 != countUser )
+            {
+                sbOut.AppendFormat( "{0,19:D} gdi objects\n", countGDI );
+                sbOut.AppendFormat( "{0,19:D} user objects\n", countUser );
+            }
+        }
+        catch ( Exception e )
+        {
+        }
+    } //ShowGuiResources
 
     static void ShowWow64Info( IntPtr hProcess )
     {
@@ -243,6 +263,8 @@ class ProcessList
             sbOut.AppendFormat( "{0,19:N0} kernel cpu time (ms)\n", GetKernelMilliseconds( proc ) );
             sbOut.AppendFormat( "{0,19:N0} user cpu time (ms)\n", GetUserMilliseconds( proc ) );
             sbOut.AppendFormat( "{0,19:N0} total cpu time (ms)\n", GetTotalMilliseconds( proc ) );
+
+            ShowGuiResources( proc.Handle );
 
             DateTime startTime = GetStartTime( proc );
 
