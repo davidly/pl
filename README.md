@@ -42,24 +42,29 @@ Sample results:
     
           7        549,089,280      181    3,627        303,308       33,372  (TOTAL)
 
-    C:\>pl -f "adobe installer"
+    C:\>pl -f winword
     
-        Adobe Installer
-                  25444 process id
-                      3 threads
-                    225 handles
-            118,194,176 virtual size
-            126,058,496 peak virtual size
-             12,677,120 working set
-             13,217,792 peak working set
-              3,403,776 pagefile usage
-              4,079,616 peak pagefile usage
-              3,403,776 private memory
-                162,728 quota paged pool
-                 16,896 quota non-paged pool
-                     31 kernel cpu time (ms)
-                     31 user cpu time (ms)
-                     62 total cpu time (ms)
-     0001:05:52:37:0876 runtime in dddd:hh:mm:ss:mmmm
-            Executable: C:\Program Files (x86)\Common Files\Adobe\Adobe Desktop Common\ElevationManager\Adobe Installer.exe
-               Command: "C:\Program Files (x86)\Common Files\Adobe\Adobe Desktop Common\ElevationManager\Adobe Installer.exe" --pipename={871D3EC1-DED0-4797-9433-7CE476AE62B2}
+        WINWORD
+                  11220 process id
+                     53 threads
+                  1,891 handles
+         19,274,203,136 virtual size
+         19,521,929,216 peak virtual size
+            384,090,112 working set
+            384,090,112 peak working set
+            158,478,336 pagefile usage
+            159,408,128 peak pagefile usage
+            158,478,336 private memory
+              2,035,024 quota paged pool
+                107,656 quota non-paged pool
+                  1,562 kernel cpu time (ms)
+                  3,640 user cpu time (ms)
+                  5,203 total cpu time (ms)
+                    214 gdi objects
+                    132 user objects
+      0000:00:00:09:604 runtime in dddd:hh:mm:ss:mmm
+            start time: 11/14/2022 9:11:48 AM
+          window title: Document1 - Word
+      process, machine: 0x8664 == AMD 64, 0xaa64 == Arm 64
+            executable: C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE
+               command: "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"
