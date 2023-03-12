@@ -242,6 +242,20 @@ class ProcessList
         return new DateTime( 0 );
     } //GetStartTime
 
+    static IntPtr GetHandle( Process proc )
+    {
+        try
+        {
+            return proc.Handle;
+        }
+        catch ( Exception e )
+        {
+            // probably access-denied
+        }
+
+        return (IntPtr) 0;
+    } //GetHandle
+
     static void PrintProcessInfo( Process proc )
     {
         if ( g_FullInfo )
@@ -264,7 +278,10 @@ class ProcessList
             sbOut.AppendFormat( "{0,19:N0} user cpu time (ms)\n", GetUserMilliseconds( proc ) );
             sbOut.AppendFormat( "{0,19:N0} total cpu time (ms)\n", GetTotalMilliseconds( proc ) );
 
-            ShowGuiResources( proc.Handle );
+            IntPtr handle = GetHandle( proc );
+
+            if ( (IntPtr) 0 != handle )
+                ShowGuiResources( handle );
 
             DateTime startTime = GetStartTime( proc );
 
@@ -278,7 +295,8 @@ class ProcessList
             if ( null != title && title.Length > 0 )
                 sbOut.AppendFormat( "      window title: {0}\n", title );
 
-            ShowWow64Info( proc.Handle );
+            if ( (IntPtr) 0 != handle )
+                ShowWow64Info( handle );
 
             try
             {
