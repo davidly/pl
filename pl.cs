@@ -278,25 +278,25 @@ class ProcessList
             sbOut.AppendFormat( "{0,19:N0} user cpu time (ms)\n", GetUserMilliseconds( proc ) );
             sbOut.AppendFormat( "{0,19:N0} total cpu time (ms)\n", GetTotalMilliseconds( proc ) );
 
-            IntPtr handle = GetHandle( proc );
-
-            if ( (IntPtr) 0 != handle )
-                ShowGuiResources( handle );
-
             DateTime startTime = GetStartTime( proc );
 
             TimeSpan runtime = DateTime.Now - startTime;
-            sbOut.AppendFormat( "  {0,4:D4}:{1,2:D2}:{2,2:D2}:{3,2:D2}:{4,3:D3} runtime in dddd:hh:mm:ss:mmm\n",
+            sbOut.AppendFormat( "{0,19:N0} elapsed time (ms)\n", runtime.TotalMilliseconds );
+            sbOut.AppendFormat( "  {0,4:D4}:{1,2:D2}:{2,2:D2}:{3,2:D2}:{4,3:D3} elapsed time in dddd:hh:mm:ss:mmm\n",
                                 runtime.Days, runtime.Hours, runtime.Minutes, runtime.Seconds, runtime.Milliseconds );
 
             sbOut.AppendFormat( "        start time: {0}\n", startTime );
 
+            IntPtr handle = GetHandle( proc );
+            if ( (IntPtr) 0 != handle )
+            {
+                ShowGuiResources( handle );
+                ShowWow64Info( handle );
+            }
+
             string title = GetWindowTitle( proc );
             if ( null != title && title.Length > 0 )
                 sbOut.AppendFormat( "      window title: {0}\n", title );
-
-            if ( (IntPtr) 0 != handle )
-                ShowWow64Info( handle );
 
             try
             {
