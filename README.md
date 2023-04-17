@@ -45,26 +45,27 @@ Sample results:
     C:\>pl -f winword
     
         WINWORD
-                  11220 process id
-                     53 threads
-                  1,891 handles
-         19,274,203,136 virtual size
-         19,521,929,216 peak virtual size
-            384,090,112 working set
-            384,090,112 peak working set
-            158,478,336 pagefile usage
-            159,408,128 peak pagefile usage
-            158,478,336 private memory
-              2,035,024 quota paged pool
-                107,656 quota non-paged pool
-                  1,562 kernel cpu time (ms)
-                  3,640 user cpu time (ms)
-                  5,203 total cpu time (ms)
-                    214 gdi objects
-                    132 user objects
-      0000:00:00:09:604 runtime in dddd:hh:mm:ss:mmm
-            start time: 11/14/2022 9:11:48 AM
-          window title: Document1 - Word
-      process, machine: 0x8664 == AMD 64, 0xaa64 == Arm 64
-            executable: C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE
-               command: "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"
+                29564 process id
+                  153 threads
+                2,439 handles
+    2,209,569,435,648 virtual size
+    2,209,839,640,576 peak virtual size
+          222,019,584 working set
+          227,164,160 peak working set
+          135,696,384 pagefile usage
+          142,004,224 peak pagefile usage
+          135,696,384 private memory
+            2,459,888 quota paged pool
+              108,832 quota non-paged pool
+                  265 kernel cpu time (ms)
+                  203 user cpu time (ms)
+                  468 total cpu time (ms)
+               54,328 elapsed time (ms)
+    0000:00:00:54:328 elapsed time in dddd:hh:mm:ss:mmm
+          start time: 4/17/2023 11:22:08 AM
+                  197 gdi objects
+                  240 user objects
+    process, machine: 0x8664 == AMD 64, 0x8664 == AMD 64
+        window title: Document1 - Word
+          executable: C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE
+             command: "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"
