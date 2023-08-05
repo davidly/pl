@@ -326,14 +326,14 @@ class ProcessList
         {
             if ( ! g_HeaderShown )
             {
-                sbOut.AppendLine( "    Pid        Working set  Threads   Handles  Nonpaged pool     CPU (ms)  Name" );
+                sbOut.AppendLine( "    Pid        Working set  Threads      Handles  Nonpaged pool     CPU (ms)  Name" );
                 g_HeaderShown = true;
             }
 
             sbOut.AppendFormat( "{0,7:D} ", proc.Id );
             sbOut.AppendFormat( "{0,18:N0} ", proc.WorkingSet64 );
             sbOut.AppendFormat( "{0,8:N0} ", proc.Threads.Count );
-            sbOut.AppendFormat( "{0,9:N0} ", proc.HandleCount );
+            sbOut.AppendFormat( "{0,12:N0} ", proc.HandleCount );
             sbOut.AppendFormat( "{0,14:N0} ", proc.NonpagedSystemMemorySize64 );
             sbOut.AppendFormat( "{0,12:N0} ", GetTotalMilliseconds( proc ) );
             sbOut.AppendFormat( " " + proc.ProcessName );
@@ -597,7 +597,7 @@ class ProcessList
                     sbOut.AppendFormat( "{0,7:D} ", procs.Length );
                     sbOut.AppendFormat( "{0,18:N0} ", g_WorkingSetTotal );
                     sbOut.AppendFormat( "{0,8:N0} ", g_ThreadsTotal );
-                    sbOut.AppendFormat( "{0,9:N0} ", g_HandlesTotal );
+                    sbOut.AppendFormat( "{0,12:N0} ", g_HandlesTotal );
                     sbOut.AppendFormat( "{0,14:N0} ", g_NonPagedPoolTotal );
                     sbOut.AppendFormat( "{0,12:N0} ", g_CPUTimeTotal );
                     sbOut.AppendFormat( " (TOTAL)" );
