@@ -52,7 +52,7 @@ class ProcessList
         sbOut.AppendLine( "             -k             Kills the process(es) (only when not all processes)" );
         sbOut.AppendLine( "             -m             Used with -f, shows modules loaded in the process" );
         sbOut.AppendLine( "             -p             Match [APPNAME] with the path of processes in addition to name" );
-        sbOut.AppendLine( "             -s:[C|N|P|S|W] Sort by CPU Time, Name, PID, Start Time, or Working Set (default)" );
+        sbOut.AppendLine( "             -s:[C|H|N|P|S|W] Sort by CPU Time, Handle count, Name, PID, Start time, or Working set (default)" );
         sbOut.AppendLine( "  examples: pl              list all processes" );
         sbOut.AppendLine( "            pl 1542         list process with this PID" );
         sbOut.AppendLine( "            pl -s:w msedge  list processes with this name sorted by working set" );
@@ -326,7 +326,7 @@ class ProcessList
         {
             if ( ! g_HeaderShown )
             {
-                sbOut.AppendLine( "    Pid        Working set  Threads      Handles  Nonpaged pool     CPU (ms)  Name" );
+                sbOut.AppendLine( "    Pid        Working set  Threads      Handles  Nonpaged pool      CPU (ms)  Name" );
                 g_HeaderShown = true;
             }
 
@@ -335,7 +335,7 @@ class ProcessList
             sbOut.AppendFormat( "{0,8:N0} ", proc.Threads.Count );
             sbOut.AppendFormat( "{0,12:N0} ", proc.HandleCount );
             sbOut.AppendFormat( "{0,14:N0} ", proc.NonpagedSystemMemorySize64 );
-            sbOut.AppendFormat( "{0,12:N0} ", GetTotalMilliseconds( proc ) );
+            sbOut.AppendFormat( "{0,13:N0} ", GetTotalMilliseconds( proc ) );
             sbOut.AppendFormat( " " + proc.ProcessName );
 
             g_WorkingSetTotal += proc.WorkingSet64;
@@ -377,6 +377,14 @@ class ProcessList
             return ( (Process) x ).Id - ( (Process) y ).Id;
         }
     } //ProcComparerPID
+
+    public class ProcComparerHandleCount : IComparer
+    {
+        public int Compare( Object x, Object y )
+        {
+            return ( (Process) x ).HandleCount - ( (Process) y ).HandleCount;
+        }
+    } //ProcComparerHandleCount
 
     public class ProcComparerName : IComparer
     {
@@ -501,6 +509,8 @@ class ProcessList
                         comp = new ProcComparerPID();
                     else if ( 'N' == s )
                         comp = new ProcComparerName();
+                    else if ( 'H' == s )
+                        comp = new ProcComparerHandleCount();
                     else if ( 'C' == s )
                         comp = new ProcComparerCPUTime();
                     else
@@ -594,12 +604,13 @@ class ProcessList
                 if ( ! g_FullInfo && g_HeaderShown )
                 {
                     sbOut.AppendLine();
+                    sbOut.AppendLine( "  Count        Working set  Threads      Handles  Nonpaged pool      CPU (ms)  Name" );
                     sbOut.AppendFormat( "{0,7:D} ", procs.Length );
                     sbOut.AppendFormat( "{0,18:N0} ", g_WorkingSetTotal );
                     sbOut.AppendFormat( "{0,8:N0} ", g_ThreadsTotal );
                     sbOut.AppendFormat( "{0,12:N0} ", g_HandlesTotal );
                     sbOut.AppendFormat( "{0,14:N0} ", g_NonPagedPoolTotal );
-                    sbOut.AppendFormat( "{0,12:N0} ", g_CPUTimeTotal );
+                    sbOut.AppendFormat( "{0,13:N0} ", g_CPUTimeTotal );
                     sbOut.AppendFormat( " (TOTAL)" );
                     sbOut.AppendLine();
                 }
