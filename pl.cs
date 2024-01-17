@@ -313,7 +313,7 @@ class ProcessList
                     foreach ( ProcessModule m in modules )
                     {
                         if ( m.FileName != pm.FileName )
-                            sbOut.AppendFormat( "          {0,13:N0} bytes -- {1}\n", m.ModuleMemorySize, m.FileName );
+                            sbOut.AppendFormat( "{0,19:N0} {1}\n", m.ModuleMemorySize, m.FileName );
                     }
                 }
             }
